@@ -149,7 +149,7 @@ void Game::createScene()
     lightNode->setPosition(20, 80, 50);
     //! [lightpos]
 
-    std::cout << "h:" << getRenderWindow()->getHeight() << ";w:" << getRenderWindow()->getWidth() << std::endl;
+    //std::cout << "h:" << getRenderWindow()->getHeight() << ";w:" << getRenderWindow()->getWidth() << std::endl;
     //OgreBites::TrayManager* 
         mTrayMgr = new OgreBites::TrayManager("InterfaceName", getRenderWindow());
 
@@ -170,14 +170,18 @@ void Game::createScene()
     mFPS = mTrayMgr->createLabel(TL_TOPRIGHT, "FPS", "FPS: 60", 150);
     mTPU = mTrayMgr->createLabel(TL_TOPRIGHT, "TPU", "Time/Update: 0m/s", 200);
     Ogre::Entity* ballEntity = scnMgr->createEntity(SceneManager::PrefabType::PT_SPHERE);
+    ballEntity->setMaterialName("MyMaterial2");
     //Ogre::SceneNode* 
         ballNode = scnMgr->getRootSceneNode()->createChildSceneNode();
     ballNode->setPosition(0, 100, 0);
     ballNode->setScale(0.1f, 0.1f, 0.1f);
+   
     ballNode->attachObject(ballEntity);
    
 
     Ogre::Entity* paddleEntity = scnMgr->createEntity(SceneManager::PrefabType::PT_PLANE);
+    //paddleEntity->setMaterialName("MyMaterial3");
+    paddleEntity->setMaterialName("MyMaterial3");
     //Ogre::SceneNode* 
     paddleNode = scnMgr->getRootSceneNode()->createChildSceneNode();
     paddleNode->setPosition(0, -10, 0);
