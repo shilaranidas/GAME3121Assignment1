@@ -75,6 +75,7 @@ public:
 
     void setup();
     bool keyPressed(const KeyboardEvent& evt);
+    bool mouseMoved(const MouseMotionEvent& evt) override;
     bool frameRenderingQueued(const FrameEvent& evt);
     void createScene();
     void createCamera();
@@ -245,7 +246,17 @@ bool Game::keyPressed(const KeyboardEvent& evt)
     }
     return true;
 }
+bool Game::mouseMoved(const MouseMotionEvent& evt)
+{
+    // Pause game when the game is over
+    if (gameover)
+        return true;
 
+    float mtw = (evt.x - (float)getRenderWindow()->getWidth() / 2.0f) * 0.5f;
+
+    paddleNode->setPosition(Vector3(mtw, -10.f, 0.f));
+    return true;
+}
 bool Game::frameRenderingQueued(const FrameEvent& evt)
 {
     if (time < rt)
