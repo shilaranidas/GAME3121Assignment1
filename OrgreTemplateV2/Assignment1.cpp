@@ -29,12 +29,22 @@ public:
     bool keyPressed(const KeyboardEvent& evt);
     OgreBites::TrayListener myTrayListener;
     OgreBites::Label* mInfoLabel;
+    OgreBites::Label* mScoreLabel;
+    OgreBites::Label* mScore;
+    OgreBites::Label* mLivesLabel;
+    OgreBites::Label* mLives;
+    Ogre::DisplayString sc = "0";
+    Ogre::DisplayString l = "3";
+    int score = 0;
+    int lives = 3;
 };
 
 
 BasicTutorial1::BasicTutorial1()
-    : ApplicationContext("Tray2")
+    : ApplicationContext("Assignment 1")
 {
+    score = 0;
+    lives = 3;
 }
 
 
@@ -99,7 +109,10 @@ void BasicTutorial1::setup()
     //mTrayMgr->toggleAdvancedFrameStats();
 
     mInfoLabel = mTrayMgr->createLabel(TL_TOP, "TInfo", "My Game Engine", 350);
-
+    mScoreLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Score", "Score:", 150);
+    mScore = mTrayMgr->createLabel(TL_TOPLEFT, "score", sc, 150);
+    mLivesLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Lives", "Lives:", 150);
+    mLives = mTrayMgr->createLabel(TL_TOPLEFT, "lives", l, 150);
     // a friendly reminder
     StringVector names;
     names.push_back("Help");
