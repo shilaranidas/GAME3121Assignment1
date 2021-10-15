@@ -65,7 +65,10 @@ private:
     Ogre::int32 score = 0;
     Ogre::int32 lives = 3;
     bool gameover = false;
-
+    int nof = 0;
+    float time = 0;
+    float fr = 0;
+    float rt = 0.03;
 public:
     Game();
     virtual ~Game() {}
@@ -82,6 +85,7 @@ public:
     OgreBites::Label* mScore;
     OgreBites::Label* mLivesLabel;
     OgreBites::Label* mLives;
+    OgreBites::Label* mFPS;
     OgreBites::Button* mQuitBtn = nullptr;
     OgreBites::Label* mGameOverLabel;
     Ogre::DisplayString sc ;
@@ -162,7 +166,7 @@ void Game::createScene()
     mScore = mTrayMgr->createLabel(TL_TOPLEFT, "score", sc, 150);
     mLivesLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Lives", "Lives:", 150);
     mLives = mTrayMgr->createLabel(TL_TOPLEFT, "lives", l, 150);
-
+    mFPS = mTrayMgr->createLabel(TL_TOPRIGHT, "FPS", "FPS: 60", 150);
 
     Ogre::Entity* ballEntity = scnMgr->createEntity(SceneManager::PrefabType::PT_SPHERE);
     //Ogre::SceneNode* 
@@ -239,6 +243,20 @@ bool Game::keyPressed(const KeyboardEvent& evt)
 
 bool Game::frameRenderingQueued(const FrameEvent& evt)
 {
+    if (time < rt)
+    {
+        time += evt.timeSinceLastFrame;
+        nof++;
+    }
+    else
+    {
+        fr = (float)nof / time;
+        nof = 0;
+        time = 0;
+        char str[20];
+        sprintf_s(str, "FPS: %.1f", fr);
+        mFPS->setCaption(str);
+    }
     if (gameover)
     {
        
@@ -250,6 +268,7 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
     }
     else
     {
+
         //moving ball
         if (ballNode->getPosition().y > 135)
         {
