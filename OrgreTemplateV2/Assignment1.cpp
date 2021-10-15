@@ -1,3 +1,4 @@
+#pragma once
 /** @file Week5-7-PrefabTypeDemo.cpp
  *  @brief Using Scene Manager PrefabType to create
  *
@@ -7,7 +8,9 @@
  *  @bug No known bugs.
  */
 
-#include "Ogre.h"
+//#include "Ogre.h"
+#include "Ball.h"
+
 #include "OgreApplicationContext.h"
 #include "OgreInput.h"
 #include "OgreRTShaderSystem.h"
@@ -17,7 +20,7 @@
 using namespace Ogre;
 using namespace OgreBites;
 Ogre::Vector3 translate(0, 0, 0);
-Ogre::Vector3 btranslate(0, 0, 0);
+
 Ogre::int32 movDirY;
 Ogre::int32 movDirX;
 
@@ -26,6 +29,7 @@ class ExampleFrameListener : public Ogre::FrameListener
 private:
     Ogre::SceneNode* _node;
     Ogre::SceneNode* _bnode;
+    Ogre::Vector3 btranslate;
 public:
 
     ExampleFrameListener(Ogre::SceneNode* node, Ogre::SceneNode* bnode)
@@ -42,8 +46,8 @@ public:
        
         
         //std::cout << "xpos:ypos=" << _bnode->getPosition().x<<":"<< _bnode->getPosition().y << std::endl;
-        btranslate = Ogre::Vector3(-10*movDirX, -10 * movDirY, 0);
-        _bnode->translate(btranslate * evt.timeSinceLastFrame);
+       // btranslate = Ogre::Vector3(-10*movDirX, -10 * movDirY, 0);
+        //_bnode->translate(btranslate * evt.timeSinceLastFrame);
         
        
         return true;
@@ -92,6 +96,7 @@ public:
     OgreBites::Label* mGameOverLabel;
     Ogre::DisplayString sc ;
     Ogre::DisplayString l;
+    Ball* mBall;
    
 };
 
@@ -102,9 +107,10 @@ Game::Game()
     score = 0;
     lives = 3;
     isCollide = 0;//no collision
-    movDirY = 1;
+    mBall = nullptr;
+   // movDirY = 1;
    
-    movDirX = 0;// Ogre::Math::RangeRandom(-1, 1);
+  //  movDirX = 0;// Ogre::Math::RangeRandom(-1, 1);
 }
 
 
@@ -172,13 +178,14 @@ void Game::createScene()
     mTPU = mTrayMgr->createLabel(TL_TOPRIGHT, "TPU", "Time/Update: 0m/s", 200);
     Ogre::Entity* ballEntity = scnMgr->createEntity(SceneManager::PrefabType::PT_SPHERE);
     ballEntity->setMaterialName("MyMaterial2");
+    mBall = new Ball(ballEntity, scnMgr);
     //Ogre::SceneNode* 
-        ballNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+       /* ballNode = scnMgr->getRootSceneNode()->createChildSceneNode();
     ballNode->setPosition(0, 100, 0);
     ballNode->setScale(0.1f, 0.1f, 0.1f);
    
-    ballNode->attachObject(ballEntity);
-   
+    ballNode->attachObject(ballEntity);*/
+    ballNode = mBall->getShape();
 
     Ogre::Entity* paddleEntity = scnMgr->createEntity(SceneManager::PrefabType::PT_PLANE);
     //paddleEntity->setMaterialName("MyMaterial3");
@@ -259,6 +266,7 @@ bool Game::mouseMoved(const MouseMotionEvent& evt)
 }
 bool Game::frameRenderingQueued(const FrameEvent& evt)
 {
+    mBall->update(evt);
     if (time < rt)
     {
         time += evt.timeSinceLastFrame;
@@ -287,12 +295,6 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
     }
     else
     {
-
-        //moving ball
-        if (ballNode->getPosition().y > 135)
-        {
-            movDirY = 1;
-        }
         if (ballNode->getPosition().y < -50)
         {
             //std::cout << "ball fall" << std::endl;
@@ -303,6 +305,7 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
                 mLives->setCaption(l);
                 ballNode->setPosition(Ogre::Vector3(0, 100, 0));
                 std::cout << "lives:" << lives << std::endl;
+                mBall->reset();
             }
             else
             {
@@ -310,17 +313,7 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
                 mQuitBtn = mTrayMgr->createButton(TL_CENTER, "qbtn", "Quit Game", 150);
                 gameover = true;
             }
-            
-        }
-        if (ballNode->getPosition().x > 112)
-        {
-            movDirX = 1;
-            std::cout << "greater then 112" << std::endl;
-        }
-        if (ballNode->getPosition().x < -112)
-        {
-            std::cout << "less then -112" << std::endl;
-            movDirX = -1;
+
         }
         //collision
         AxisAlignedBox spbox = ballNode->_getWorldAABB();
@@ -332,6 +325,7 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
                 std::cout << "collide";
                 isCollide = 1;
                 movDirY = -1;
+                mBall->setVelY(-1);
                 score++;
                 sc = std::to_string(score);
                 mScore->setCaption(sc);
@@ -352,6 +346,8 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
                         //object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
                         movDirX = 1;
                         movDirY = -1;
+                        mBall->setVelY(-1);
+                        mBall->setVelX(1);
                         std::cout << "bottom right" << std::endl;
                     }
                     else
@@ -359,6 +355,8 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
                         // object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
                         movDirY = -1;
                         movDirX = -1;
+                        mBall->setVelY(-1);
+                        mBall->setVelX(-1);
                         std::cout << "bottom left" << std::endl;
                     }
                 }
