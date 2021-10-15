@@ -17,23 +17,30 @@
 using namespace Ogre;
 using namespace OgreBites;
 Ogre::Vector3 translate(0, 0, 0);
+Ogre::Vector3 btranslate(0, 0, 0);
 
 class ExampleFrameListener : public Ogre::FrameListener
 {
 private:
     Ogre::SceneNode* _node;
+    Ogre::SceneNode* _bnode;
 public:
 
-    ExampleFrameListener(Ogre::SceneNode* node)
+    ExampleFrameListener(Ogre::SceneNode* node, Ogre::SceneNode* bnode)
     {
         _node = node;
+        _bnode = bnode;
     }
 
     bool frameStarted(const Ogre::FrameEvent& evt)
     {
-        _node->translate(translate * evt.timeSinceLastFrame);
-       
+        //moving paddle
+        _node->translate(translate * evt.timeSinceLastFrame);       
         translate = Ogre::Vector3(0, 0, 0);
+        
+        //moving ball
+        _bnode->translate(btranslate * evt.timeSinceLastFrame);
+        btranslate = Ogre::Vector3(0, -10, 0);
         return true;
     }
 };
@@ -44,6 +51,7 @@ class BasicTutorial1
 {
 private:
     SceneNode* paddleNode;
+    Ogre::SceneNode* ballNode;
     SceneManager* scnMgr;
     Root* root;
 public:
@@ -142,10 +150,12 @@ void BasicTutorial1::createScene()
 
 
     Ogre::Entity* ballEntity = scnMgr->createEntity(SceneManager::PrefabType::PT_SPHERE);
-    Ogre::SceneNode* ballNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-    ballNode->setPosition(0, 0, 0);
-    ballNode->setScale(0.2f, 0.2f, 0.2f);
+    //Ogre::SceneNode* 
+        ballNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+    ballNode->setPosition(0, 100, 0);
+    ballNode->setScale(0.1f, 0.1f, 0.1f);
     ballNode->attachObject(ballEntity);
+   
 
     Ogre::Entity* paddleEntity = scnMgr->createEntity(SceneManager::PrefabType::PT_PLANE);
     //Ogre::SceneNode* 
@@ -183,7 +193,7 @@ void BasicTutorial1::createCamera()
 
 void BasicTutorial1::createFrameListener()
 {
-    Ogre::FrameListener* FrameListener = new ExampleFrameListener(paddleNode);
+    Ogre::FrameListener* FrameListener = new ExampleFrameListener(paddleNode, ballNode);
     mRoot->addFrameListener(FrameListener);
 }
 
