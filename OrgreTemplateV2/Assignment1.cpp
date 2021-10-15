@@ -86,6 +86,7 @@ public:
     OgreBites::Label* mLivesLabel;
     OgreBites::Label* mLives;
     OgreBites::Label* mFPS;
+    OgreBites::Label* mTPU;
     OgreBites::Button* mQuitBtn = nullptr;
     OgreBites::Label* mGameOverLabel;
     Ogre::DisplayString sc ;
@@ -167,7 +168,7 @@ void Game::createScene()
     mLivesLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Lives", "Lives:", 150);
     mLives = mTrayMgr->createLabel(TL_TOPLEFT, "lives", l, 150);
     mFPS = mTrayMgr->createLabel(TL_TOPRIGHT, "FPS", "FPS: 60", 150);
-
+    mTPU = mTrayMgr->createLabel(TL_TOPRIGHT, "TPU", "Time/Update: 0m/s", 200);
     Ogre::Entity* ballEntity = scnMgr->createEntity(SceneManager::PrefabType::PT_SPHERE);
     //Ogre::SceneNode* 
         ballNode = scnMgr->getRootSceneNode()->createChildSceneNode();
@@ -257,6 +258,9 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
         sprintf_s(str, "FPS: %.1f", fr);
         mFPS->setCaption(str);
     }
+    char str1[80];
+    sprintf_s(str1, "Time/Update: %.3f m/s", evt.timeSinceLastFrame);
+    mTPU->setCaption(str1);
     if (gameover)
     {
        
