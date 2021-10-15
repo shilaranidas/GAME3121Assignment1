@@ -84,8 +84,8 @@ public:
     OgreBites::Label* mLives;
     OgreBites::Button* mQuitBtn = nullptr;
     OgreBites::Label* mGameOverLabel;
-    Ogre::DisplayString sc = "0";
-    Ogre::DisplayString l = "3";
+    Ogre::DisplayString sc ;
+    Ogre::DisplayString l;
    
 };
 
@@ -154,8 +154,7 @@ void Game::createScene()
     addInputListener(mTrayMgr);
 
     mTrayMgr->showLogo(TL_TOPRIGHT);
-   // mTrayMgr->showFrameStats(TL_TOPRIGHT);
-    //mTrayMgr->toggleAdvancedFrameStats();
+ 
     sc = std::to_string(score);
     l = std::to_string(lives);
     mInfoLabel = mTrayMgr->createLabel(TL_TOP, "TInfo", "Single Paddle Player Game", 350);
@@ -163,15 +162,6 @@ void Game::createScene()
     mScore = mTrayMgr->createLabel(TL_TOPLEFT, "score", sc, 150);
     mLivesLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Lives", "Lives:", 150);
     mLives = mTrayMgr->createLabel(TL_TOPLEFT, "lives", l, 150);
-   // mGameOverLabel = mTrayMgr->createLabel(TL_CENTER, "gameO", "GAME OVER!", 150);
-    //mQuitBtn = mTrayMgr->createButton(TL_CENTER, "qbtn", "Quit Game", 150);
-   
-   // mGameOverLabel->hide();
-    //mQuitBtn->hide();
-    // a friendly reminder
-    //StringVector names;
-    //names.push_back("Help");
-    //mTrayMgr->createParamsPanel(TL_TOPLEFT, "Help", 100, names)->setParamValue(0, "H/F1");
 
 
     Ogre::Entity* ballEntity = scnMgr->createEntity(SceneManager::PrefabType::PT_SPHERE);
@@ -251,8 +241,7 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
 {
     if (gameover)
     {
-       // mGameOverLabel->show();
-        //mQuitBtn->show();
+       
         if (mQuitBtn->getState() == OgreBites::ButtonState::BS_DOWN)
         {
             getRoot()->queueEndRendering();
@@ -262,7 +251,7 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
     else
     {
         //moving ball
-        if (ballNode->getPosition().y > 130)
+        if (ballNode->getPosition().y > 135)
         {
             movDirY = 1;
         }
@@ -285,14 +274,14 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
             }
             
         }
-        if (ballNode->getPosition().x > 102)
+        if (ballNode->getPosition().x > 112)
         {
             movDirX = 1;
-            std::cout << "greater then 102" << std::endl;
+            std::cout << "greater then 112" << std::endl;
         }
-        if (ballNode->getPosition().x < -102)
+        if (ballNode->getPosition().x < -112)
         {
-            std::cout << "less then -102" << std::endl;
+            std::cout << "less then -112" << std::endl;
             movDirX = -1;
         }
         //collision
