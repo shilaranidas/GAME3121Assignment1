@@ -10,6 +10,7 @@
 
 //#include "Ogre.h"
 #include "Ball.h"
+#include "Bat.h"
 
 #include "OgreApplicationContext.h"
 #include "OgreInput.h"
@@ -29,7 +30,7 @@ class ExampleFrameListener : public Ogre::FrameListener
 private:
     Ogre::SceneNode* _node;
     Ogre::SceneNode* _bnode;
-    Ogre::Vector3 btranslate;
+    //Ogre::Vector3 btranslate;
 public:
 
     ExampleFrameListener(Ogre::SceneNode* node, Ogre::SceneNode* bnode)
@@ -41,8 +42,8 @@ public:
     bool frameStarted(const Ogre::FrameEvent& evt)
     {
         //moving paddle
-        _node->translate(translate * evt.timeSinceLastFrame);       
-        translate = Ogre::Vector3(0, 0, 0);
+        //_node->translate(translate * evt.timeSinceLastFrame);       
+        //translate = Ogre::Vector3(0, 0, 0);
        
         
         //std::cout << "xpos:ypos=" << _bnode->getPosition().x<<":"<< _bnode->getPosition().y << std::endl;
@@ -94,10 +95,11 @@ public:
     OgreBites::Label* mTPU;
     OgreBites::Button* mQuitBtn = nullptr;
     OgreBites::Label* mGameOverLabel;
+    OgreBites::Label* mHelp;
     Ogre::DisplayString sc ;
     Ogre::DisplayString l;
     Ball* mBall;
-   
+    Bat* mBat;
 };
 
 
@@ -170,6 +172,7 @@ void Game::createScene()
     sc = std::to_string(score);
     l = std::to_string(lives);
     mInfoLabel = mTrayMgr->createLabel(TL_TOP, "TInfo", "Single Paddle Player Game", 350);
+    mHelp = mTrayMgr->createLabel(TL_BOTTOM, "Thelp", "press 'm' for switching mouse/key arrow or A D", 500);
     mScoreLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Score", "Score:", 150);
     mScore = mTrayMgr->createLabel(TL_TOPLEFT, "score", sc, 150);
     mLivesLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Lives", "Lives:", 150);
@@ -190,11 +193,9 @@ void Game::createScene()
     Ogre::Entity* paddleEntity = scnMgr->createEntity(SceneManager::PrefabType::PT_PLANE);
     //paddleEntity->setMaterialName("MyMaterial3");
     paddleEntity->setMaterialName("MyMaterial3");
+    mBat = new Bat(paddleEntity, scnMgr);
     //Ogre::SceneNode* 
-    paddleNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-    paddleNode->setPosition(0, -10, 0);
-    paddleNode->setScale(0.2f, 0.05f, 1.0f);
-    paddleNode->attachObject(paddleEntity);
+    paddleNode = mBat->getShape();
 
     scnMgr->showBoundingBoxes(true);
 
@@ -237,16 +238,16 @@ bool Game::keyPressed(const KeyboardEvent& evt)
     case SDLK_ESCAPE:
         getRoot()->queueEndRendering();
         break;
-   
+    case 'm':
+        mBat->isMouseActive = !mBat->isMouseActive;
+        break;
     case 'a':
     case SDLK_LEFT:
-        if(paddleNode->getPosition().x > -102)
-        translate = Ogre::Vector3(-30, 0, 0);     
+        mBat->moveLeft();
         break;
     case 'd':
     case SDLK_RIGHT:
-        if (paddleNode->getPosition().x<102)
-        translate = Ogre::Vector3(30, 0, 0);        
+        mBat->moveRight();
         break;
     default:
         break;
@@ -260,13 +261,15 @@ bool Game::mouseMoved(const MouseMotionEvent& evt)
         return true;
 
     float mtw = (evt.x - (float)getRenderWindow()->getWidth() / 2.0f) * 0.5f;
-
-    paddleNode->setPosition(Vector3(mtw, -10.f, 0.f));
+    
+    mBat->setPosition(Vector3(mtw, -10.f, 0.f));
+    
     return true;
 }
 bool Game::frameRenderingQueued(const FrameEvent& evt)
 {
     mBall->update(evt);
+    mBat->update(evt);
     if (time < rt)
     {
         time += evt.timeSinceLastFrame;
