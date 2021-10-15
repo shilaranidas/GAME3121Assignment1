@@ -80,27 +80,28 @@ public:
                 const auto dot = attackVector.dotProduct(normal); // Util::dot(attackVector, normal);
                 const auto angle = acos(dot / attackVector.length()) * Ogre::Math::fRad2Deg; // acos(dot / Util::magnitude(attackVector)) * Util::Rad2Deg;
                 std::cout << "angle:x:y:z" << angle<<":"<< attackVector.x <<":"<< attackVector.y<<":"<<attackVector.z << std::endl;
-                if ((attackVector.x > 0 && attackVector.y < 0) || (attackVector.x < 0 && attackVector.y < 0))
-                    // top right or top left
-                {
+                //if ((attackVector.x > 0 && attackVector.y < 0) || (attackVector.x < 0 && attackVector.y < 0))
+                //    // top right or top left
+                //{
 
-                    if (angle <= 45)
-                    {
-                        //object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
-                        movDirY = 1;
-                        movDirX = -1;
-                    }
-                    else
-                    {
-                        //object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
-                        movDirX = 1;
-                        movDirY = -1;
-                    }
-                }
+                //    if (angle <= 45)
+                //    {
+                //        //object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
+                //        movDirY = -1;
+                //        movDirX = -1;
+                //    }
+                //    else
+                //    {
+                //        //object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
+                //        movDirX = 1;
+                //        movDirY = -1;
+                //    }
+                //}
 
                 if ((attackVector.x > 0 && attackVector.y > 0) || (attackVector.x < 0 && attackVector.y > 0))
                     // bottom right or bottom left
                 {
+                    //angle = 140;
                     if (angle <= 135)
                     {
                         //object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
@@ -111,7 +112,7 @@ public:
                     else
                     {
                         // object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
-                        movDirY = 1;
+                        movDirY = -1;
                         movDirX = -1;
                         std::cout << "bottom left" << std::endl;
                     }
@@ -163,7 +164,8 @@ Game::Game()
     lives = 3;
     isCollide = 0;//no collision
     movDirY = 1;
-    movDirX = 0;
+   
+    movDirX = 0;// Ogre::Math::RangeRandom(-1, 1);
 }
 
 
