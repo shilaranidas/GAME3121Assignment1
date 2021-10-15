@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['l_0',['l',['../class_game.html#ab9e923d5e52e9f5ca9e09a6b05c8e32e',1,'Game']]]
+  ['btranslate_0',['btranslate',['../class_ball.html#a890fc2366a62a7edc99d2697a3abd965',1,'Ball']]]
 ];

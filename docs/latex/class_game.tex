@@ -17,6 +17,8 @@ void \mbox{\hyperlink{class_game_ae4618ba40eabbbe65e35f1bb239aa29b}{setup}} ()
 \item 
 bool \mbox{\hyperlink{class_game_a2ba00c3475d222573e5ad54b88b389b7}{key\+Pressed}} (const Keyboard\+Event \&evt)
 \item 
+bool \mbox{\hyperlink{class_game_a36b9393a1cc0ae239d2c897f7caa3227}{mouse\+Moved}} (const Mouse\+Motion\+Event \&evt) override
+\item 
 bool \mbox{\hyperlink{class_game_af4a6a232da68068e26aa9e6ab802ebf1}{frame\+Rendering\+Queued}} (const Frame\+Event \&evt)
 \item 
 void \mbox{\hyperlink{class_game_acc39660fc2452fc78ca45330d6032e5c}{create\+Scene}} ()
@@ -40,9 +42,23 @@ Ogre\+Bites\+::\+Label $\ast$ \mbox{\hyperlink{class_game_a4462f931a8377f644541c
 \item 
 Ogre\+Bites\+::\+Label $\ast$ \mbox{\hyperlink{class_game_a72793df0c619973aeaf69d186ed2b94d}{m\+Lives}}
 \item 
-Ogre\+::\+Display\+String \mbox{\hyperlink{class_game_a510a09520a741a325ffec1625148ec59}{sc}} = \char`\"{}0\char`\"{}
+Ogre\+Bites\+::\+Label $\ast$ \mbox{\hyperlink{class_game_a4e00d98b0e18760118a5d5a253403565}{m\+FPS}}
 \item 
-Ogre\+::\+Display\+String \mbox{\hyperlink{class_game_ab9e923d5e52e9f5ca9e09a6b05c8e32e}{l}} = \char`\"{}3\char`\"{}
+Ogre\+Bites\+::\+Label $\ast$ \mbox{\hyperlink{class_game_a89daa496b268bae106dc97067bace2da}{m\+TPU}}
+\item 
+Ogre\+Bites\+::\+Button $\ast$ \mbox{\hyperlink{class_game_a0fd8ba1b11d22ac4dd95fd0cfec77567}{m\+Quit\+Btn}} = nullptr
+\item 
+Ogre\+Bites\+::\+Label $\ast$ \mbox{\hyperlink{class_game_affa2ac152bdd78e17ba45a2e164985cb}{m\+Game\+Over\+Label}}
+\item 
+Ogre\+Bites\+::\+Label $\ast$ \mbox{\hyperlink{class_game_a56bc24e0d1919da3088294df440eff46}{m\+Help}}
+\item 
+Ogre\+::\+Display\+String \mbox{\hyperlink{class_game_a510a09520a741a325ffec1625148ec59}{sc}}
+\item 
+Ogre\+::\+Display\+String \mbox{\hyperlink{class_game_ab9e923d5e52e9f5ca9e09a6b05c8e32e}{l}}
+\item 
+\mbox{\hyperlink{class_ball}{Ball}} $\ast$ \mbox{\hyperlink{class_game_a604714f2185896da333d07cb0606eecb}{m\+Ball}}
+\item 
+\mbox{\hyperlink{class_bat}{Bat}} $\ast$ \mbox{\hyperlink{class_game_ae6e6dfd9910fe6f4d4786769807481a2}{m\+Bat}}
 \end{DoxyCompactItemize}
 
 
@@ -108,6 +124,12 @@ Ogre\+::\+Display\+String \mbox{\hyperlink{class_game_ab9e923d5e52e9f5ca9e09a6b0
 \doxysubsubsection{\texorpdfstring{keyPressed()}{keyPressed()}}
 {\footnotesize\ttfamily bool Game\+::key\+Pressed (\begin{DoxyParamCaption}\item[{const Keyboard\+Event \&}]{evt }\end{DoxyParamCaption})}
 
+\mbox{\Hypertarget{class_game_a36b9393a1cc0ae239d2c897f7caa3227}\label{class_game_a36b9393a1cc0ae239d2c897f7caa3227}} 
+\index{Game@{Game}!mouseMoved@{mouseMoved}}
+\index{mouseMoved@{mouseMoved}!Game@{Game}}
+\doxysubsubsection{\texorpdfstring{mouseMoved()}{mouseMoved()}}
+{\footnotesize\ttfamily bool Game\+::mouse\+Moved (\begin{DoxyParamCaption}\item[{const Mouse\+Motion\+Event \&}]{evt }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}}
+
 \mbox{\Hypertarget{class_game_ae4618ba40eabbbe65e35f1bb239aa29b}\label{class_game_ae4618ba40eabbbe65e35f1bb239aa29b}} 
 \index{Game@{Game}!setup@{setup}}
 \index{setup@{setup}!Game@{Game}}
@@ -121,7 +143,37 @@ Ogre\+::\+Display\+String \mbox{\hyperlink{class_game_ab9e923d5e52e9f5ca9e09a6b0
 \index{Game@{Game}!l@{l}}
 \index{l@{l}!Game@{Game}}
 \doxysubsubsection{\texorpdfstring{l}{l}}
-{\footnotesize\ttfamily Ogre\+::\+Display\+String Game\+::l = \char`\"{}3\char`\"{}}
+{\footnotesize\ttfamily Ogre\+::\+Display\+String Game\+::l}
+
+\mbox{\Hypertarget{class_game_a604714f2185896da333d07cb0606eecb}\label{class_game_a604714f2185896da333d07cb0606eecb}} 
+\index{Game@{Game}!mBall@{mBall}}
+\index{mBall@{mBall}!Game@{Game}}
+\doxysubsubsection{\texorpdfstring{mBall}{mBall}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_ball}{Ball}}$\ast$ Game\+::m\+Ball}
+
+\mbox{\Hypertarget{class_game_ae6e6dfd9910fe6f4d4786769807481a2}\label{class_game_ae6e6dfd9910fe6f4d4786769807481a2}} 
+\index{Game@{Game}!mBat@{mBat}}
+\index{mBat@{mBat}!Game@{Game}}
+\doxysubsubsection{\texorpdfstring{mBat}{mBat}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_bat}{Bat}}$\ast$ Game\+::m\+Bat}
+
+\mbox{\Hypertarget{class_game_a4e00d98b0e18760118a5d5a253403565}\label{class_game_a4e00d98b0e18760118a5d5a253403565}} 
+\index{Game@{Game}!mFPS@{mFPS}}
+\index{mFPS@{mFPS}!Game@{Game}}
+\doxysubsubsection{\texorpdfstring{mFPS}{mFPS}}
+{\footnotesize\ttfamily Ogre\+Bites\+::\+Label$\ast$ Game\+::m\+FPS}
+
+\mbox{\Hypertarget{class_game_affa2ac152bdd78e17ba45a2e164985cb}\label{class_game_affa2ac152bdd78e17ba45a2e164985cb}} 
+\index{Game@{Game}!mGameOverLabel@{mGameOverLabel}}
+\index{mGameOverLabel@{mGameOverLabel}!Game@{Game}}
+\doxysubsubsection{\texorpdfstring{mGameOverLabel}{mGameOverLabel}}
+{\footnotesize\ttfamily Ogre\+Bites\+::\+Label$\ast$ Game\+::m\+Game\+Over\+Label}
+
+\mbox{\Hypertarget{class_game_a56bc24e0d1919da3088294df440eff46}\label{class_game_a56bc24e0d1919da3088294df440eff46}} 
+\index{Game@{Game}!mHelp@{mHelp}}
+\index{mHelp@{mHelp}!Game@{Game}}
+\doxysubsubsection{\texorpdfstring{mHelp}{mHelp}}
+{\footnotesize\ttfamily Ogre\+Bites\+::\+Label$\ast$ Game\+::m\+Help}
 
 \mbox{\Hypertarget{class_game_a072635e63d48082440d02b27010372fd}\label{class_game_a072635e63d48082440d02b27010372fd}} 
 \index{Game@{Game}!mInfoLabel@{mInfoLabel}}
@@ -141,6 +193,12 @@ Ogre\+::\+Display\+String \mbox{\hyperlink{class_game_ab9e923d5e52e9f5ca9e09a6b0
 \doxysubsubsection{\texorpdfstring{mLivesLabel}{mLivesLabel}}
 {\footnotesize\ttfamily Ogre\+Bites\+::\+Label$\ast$ Game\+::m\+Lives\+Label}
 
+\mbox{\Hypertarget{class_game_a0fd8ba1b11d22ac4dd95fd0cfec77567}\label{class_game_a0fd8ba1b11d22ac4dd95fd0cfec77567}} 
+\index{Game@{Game}!mQuitBtn@{mQuitBtn}}
+\index{mQuitBtn@{mQuitBtn}!Game@{Game}}
+\doxysubsubsection{\texorpdfstring{mQuitBtn}{mQuitBtn}}
+{\footnotesize\ttfamily Ogre\+Bites\+::\+Button$\ast$ Game\+::m\+Quit\+Btn = nullptr}
+
 \mbox{\Hypertarget{class_game_a13c9913114e1c69ce99539fed27af8f6}\label{class_game_a13c9913114e1c69ce99539fed27af8f6}} 
 \index{Game@{Game}!mScore@{mScore}}
 \index{mScore@{mScore}!Game@{Game}}
@@ -153,6 +211,12 @@ Ogre\+::\+Display\+String \mbox{\hyperlink{class_game_ab9e923d5e52e9f5ca9e09a6b0
 \doxysubsubsection{\texorpdfstring{mScoreLabel}{mScoreLabel}}
 {\footnotesize\ttfamily Ogre\+Bites\+::\+Label$\ast$ Game\+::m\+Score\+Label}
 
+\mbox{\Hypertarget{class_game_a89daa496b268bae106dc97067bace2da}\label{class_game_a89daa496b268bae106dc97067bace2da}} 
+\index{Game@{Game}!mTPU@{mTPU}}
+\index{mTPU@{mTPU}!Game@{Game}}
+\doxysubsubsection{\texorpdfstring{mTPU}{mTPU}}
+{\footnotesize\ttfamily Ogre\+Bites\+::\+Label$\ast$ Game\+::m\+TPU}
+
 \mbox{\Hypertarget{class_game_af34a45d1eceabfba4403b64d45876348}\label{class_game_af34a45d1eceabfba4403b64d45876348}} 
 \index{Game@{Game}!myTrayListener@{myTrayListener}}
 \index{myTrayListener@{myTrayListener}!Game@{Game}}
@@ -163,7 +227,7 @@ Ogre\+::\+Display\+String \mbox{\hyperlink{class_game_ab9e923d5e52e9f5ca9e09a6b0
 \index{Game@{Game}!sc@{sc}}
 \index{sc@{sc}!Game@{Game}}
 \doxysubsubsection{\texorpdfstring{sc}{sc}}
-{\footnotesize\ttfamily Ogre\+::\+Display\+String Game\+::sc = \char`\"{}0\char`\"{}}
+{\footnotesize\ttfamily Ogre\+::\+Display\+String Game\+::sc}
 
 
 

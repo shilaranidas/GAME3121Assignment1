@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7egame_0',['~Game',['../class_game.html#a72772b628443c3675976d6b5e6c9ec2a',1,'Game']]]
+  ['translate_0',['translate',['../_assignment1_8cpp.html#a9dc3000fb9502d0b61f54faefe66f72c',1,'Assignment1.cpp']]]
 ];

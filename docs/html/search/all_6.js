@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['keypressed_0',['keyPressed',['../class_game.html#a2ba00c3475d222573e5ad54b88b389b7',1,'Game']]]
+  ['ismouseactive_0',['isMouseActive',['../class_bat.html#a7a6bdff9fb136e59f649e4a4a95c25a6',1,'Bat']]]
 ];
