@@ -19,7 +19,8 @@ using namespace OgreBites;
 Ogre::Vector3 translate(0, 0, 0);
 Ogre::Vector3 btranslate(0, 0, 0);
 Ogre::int32 isCollide;
-Ogre::int32 movDir;
+Ogre::int32 movDirY;
+Ogre::int32 movDirX;
 
 class ExampleFrameListener : public Ogre::FrameListener
 {
@@ -41,18 +42,85 @@ public:
         translate = Ogre::Vector3(0, 0, 0);
         
         //moving ball
+        if (_bnode->getPosition().y > 130)
+        {
+            movDirY = 1;
+           // isCollide = 0;
+        }
+        if (_bnode->getPosition().x > 102)
+        {
+            movDirX = 1;
+          //  isCollide = 0;
+            std::cout << "greater then 102" << std::endl;
+        }
+        if (_bnode->getPosition().x < -102)
+        {
+            std::cout << "less then -102" << std::endl;
+            movDirX = -1;
+           // isCollide = 0;
+        }
+        //std::cout << "xpos:ypos=" << _bnode->getPosition().x<<":"<< _bnode->getPosition().y << std::endl;
+        btranslate = Ogre::Vector3(-10*movDirX, -10 * movDirY, 0);
         _bnode->translate(btranslate * evt.timeSinceLastFrame);
-        btranslate = Ogre::Vector3(0, -10* movDir, 0);
+        
         //collision
         AxisAlignedBox spbox = _bnode->_getWorldAABB();
         AxisAlignedBox cbbox = _node->_getWorldAABB();
-        if (spbox.intersects(cbbox) && isCollide==0)
+        if (spbox.intersects(cbbox))
         {
-            std::cout << "collide";
-            isCollide = 1;
-            movDir = -1;
-           // btranslate = Ogre::Vector3(0, 10, 0);
+            if (isCollide == 0)
+            {
+                std::cout << "collide";
+                isCollide = 1;
+                movDirY = -1;
+                // btranslate = Ogre::Vector3(0, 10, 0);
+                const auto attackVector = _bnode->getPosition() - _node->getPosition();
+                const auto normal = Ogre::Vector3(0, -1, 0);
+
+                const auto dot = attackVector.dotProduct(normal); // Util::dot(attackVector, normal);
+                const auto angle = acos(dot / attackVector.length()) * Ogre::Math::fRad2Deg; // acos(dot / Util::magnitude(attackVector)) * Util::Rad2Deg;
+                std::cout << "angle:x:y:z" << angle<<":"<< attackVector.x <<":"<< attackVector.y<<":"<<attackVector.z << std::endl;
+                if ((attackVector.x > 0 && attackVector.y < 0) || (attackVector.x < 0 && attackVector.y < 0))
+                    // top right or top left
+                {
+
+                    if (angle <= 45)
+                    {
+                        //object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
+                        movDirY = 1;
+                        movDirX = -1;
+                    }
+                    else
+                    {
+                        //object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
+                        movDirX = 1;
+                        movDirY = -1;
+                    }
+                }
+
+                if ((attackVector.x > 0 && attackVector.y > 0) || (attackVector.x < 0 && attackVector.y > 0))
+                    // bottom right or bottom left
+                {
+                    if (angle <= 135)
+                    {
+                        //object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
+                        movDirX = 1;
+                        movDirY = -1;
+                        std::cout << "bottom right" << std::endl;
+                    }
+                    else
+                    {
+                        // object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
+                        movDirY = 1;
+                        movDirX = -1;
+                        std::cout << "bottom left" << std::endl;
+                    }
+                }
+            }
+
         }
+        else
+            isCollide = 0;
         return true;
     }
 };
@@ -94,7 +162,8 @@ Game::Game()
     score = 0;
     lives = 3;
     isCollide = 0;//no collision
-    movDir = 1;
+    movDirY = 1;
+    movDirX = 0;
 }
 
 
