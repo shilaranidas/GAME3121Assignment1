@@ -1,15 +1,17 @@
-/*-------------------------------------------------------------------------
-Transformation Demo
--------------------------------------------------------------------------*/
-
-//! [fullsource]
+/** @file Week5-7-PrefabTypeDemo.cpp
+ *  @brief Using Scene Manager PrefabType to create
+ *
+ *  How to use PrefabType
+ *
+ *  @author Hooman Salamat
+ *  @bug No known bugs.
+ */
 
 #include "Ogre.h"
 #include "OgreApplicationContext.h"
 #include "OgreInput.h"
 #include "OgreRTShaderSystem.h"
 #include "OgreTrays.h"
-#include "OgreApplicationContext.h"
 #include <iostream>
 
 using namespace Ogre;
@@ -25,22 +27,13 @@ public:
 
     void setup();
     bool keyPressed(const KeyboardEvent& evt);
-    bool frameStarted(const FrameEvent& evt);
-    //bool frameEnded(const FrameEvent& evt);
-    //bool frameRenderingQueued(const FrameEvent& evt);
-
-    SceneNode* barNode;
     OgreBites::TrayListener myTrayListener;
+    OgreBites::Label* mInfoLabel;
 };
 
-bool BasicTutorial1::frameStarted(const FrameEvent& evt) {
-    std::cout << "Frame Started" << std::endl;
-    barNode->translate(Ogre::Vector3(0.1, 0, 0));
-    return true;
-}
 
 BasicTutorial1::BasicTutorial1()
-    : ApplicationContext("Transformation")
+    : ApplicationContext("Tray2")
 {
 }
 
@@ -59,7 +52,7 @@ void BasicTutorial1::setup()
     RTShader::ShaderGenerator* shadergen = RTShader::ShaderGenerator::getSingletonPtr();
     shadergen->addSceneManager(scnMgr);
 
-    // -- tutorial section start --
+
     //! [turnlights]
     scnMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
     //! [turnlights]
@@ -86,44 +79,47 @@ void BasicTutorial1::setup()
 
     // and tell it to render into the main window
     getRenderWindow()->addViewport(cam);
-
-
     //! [camera]
 
-    //! [entity1]
-    Entity* ogreEntity = scnMgr->createEntity("sphere.mesh");
-    //! [entity1]
-
-    //! [entity1node]
-    SceneNode* ogreNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-    //! [entity1node]
-    ogreNode->setScale(.05, .05, .05);
-    //! [entity1nodeattach]
-    ogreNode->attachObject(ogreEntity);
-    //! [entity1nodeattach]
 
     //! [cameramove]
     camNode->setPosition(0, 47, 222);
-
     //! [cameramove]
 
 
-
-
-    //! [entity4]
-    Entity* ogreEntity4 = scnMgr->createEntity("column.mesh");
-    barNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-    barNode->setPosition(0, 48, 0);
-    barNode->roll(Degree(-90));
-    barNode->attachObject(ogreEntity4);
-    barNode->setScale(.2, .1, .05);
-    //! [entity4]
     OgreBites::TrayManager* mTrayMgr = new OgreBites::TrayManager("InterfaceName", getRenderWindow());
 
+    //you must add this in order to add a tray
+    scnMgr->addRenderQueueListener(mOverlaySystem);
     //Once you have your tray manager, make sure you relay input events to it.
     addInputListener(mTrayMgr);
 
-    // -- tutorial section end --
+    mTrayMgr->showLogo(TL_TOPRIGHT);
+    mTrayMgr->showFrameStats(TL_BOTTOMLEFT);
+    //mTrayMgr->toggleAdvancedFrameStats();
+
+    mInfoLabel = mTrayMgr->createLabel(TL_TOP, "TInfo", "My Game Engine", 350);
+
+    // a friendly reminder
+    StringVector names;
+    names.push_back("Help");
+    mTrayMgr->createParamsPanel(TL_TOPLEFT, "Help", 100, names)->setParamValue(0, "H/F1");
+
+
+    Ogre::Entity* ballEntity = scnMgr->createEntity(SceneManager::PrefabType::PT_SPHERE);
+    Ogre::SceneNode* ballNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+    ballNode->setPosition(0, 0, 0);
+    ballNode->setScale(0.2f, 0.2f, 0.2f);
+    ballNode->attachObject(ballEntity);
+
+    Ogre::Entity* paddleEntity = scnMgr->createEntity(SceneManager::PrefabType::PT_PLANE);
+    Ogre::SceneNode* paddleNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+    paddleNode->setPosition(0, -10, 0);
+    paddleNode->setScale(0.2f, 0.05f, 1.0f);
+    paddleNode->attachObject(paddleEntity);
+
+    scnMgr->showBoundingBoxes(true);
+
 }
 
 
