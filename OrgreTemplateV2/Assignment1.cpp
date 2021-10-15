@@ -18,11 +18,8 @@ using namespace Ogre;
 using namespace OgreBites;
 Ogre::Vector3 translate(0, 0, 0);
 Ogre::Vector3 btranslate(0, 0, 0);
-Ogre::int32 isCollide;
 Ogre::int32 movDirY;
 Ogre::int32 movDirX;
-Ogre::int32 score = 0;
-Ogre::int32 lives = 3;
 
 class ExampleFrameListener : public Ogre::FrameListener
 {
@@ -61,7 +58,14 @@ private:
     SceneNode* paddleNode;
     Ogre::SceneNode* ballNode;
     SceneManager* scnMgr;
+    OgreBites::TrayManager* mTrayMgr;
     Root* root;
+    Ogre::int32 isCollide;
+   
+    Ogre::int32 score = 0;
+    Ogre::int32 lives = 3;
+    bool gameover = false;
+
 public:
     Game();
     virtual ~Game() {}
@@ -78,6 +82,8 @@ public:
     OgreBites::Label* mScore;
     OgreBites::Label* mLivesLabel;
     OgreBites::Label* mLives;
+    OgreBites::Button* mQuitBtn = nullptr;
+    OgreBites::Label* mGameOverLabel;
     Ogre::DisplayString sc = "0";
     Ogre::DisplayString l = "3";
    
@@ -138,8 +144,9 @@ void Game::createScene()
     lightNode->setPosition(20, 80, 50);
     //! [lightpos]
 
-
-    OgreBites::TrayManager* mTrayMgr = new OgreBites::TrayManager("InterfaceName", getRenderWindow());
+    std::cout << "h:" << getRenderWindow()->getHeight() << ";w:" << getRenderWindow()->getWidth() << std::endl;
+    //OgreBites::TrayManager* 
+        mTrayMgr = new OgreBites::TrayManager("InterfaceName", getRenderWindow());
 
     //you must add this in order to add a tray
     scnMgr->addRenderQueueListener(mOverlaySystem);
@@ -147,15 +154,20 @@ void Game::createScene()
     addInputListener(mTrayMgr);
 
     mTrayMgr->showLogo(TL_TOPRIGHT);
-    mTrayMgr->showFrameStats(TL_TOPRIGHT);
+   // mTrayMgr->showFrameStats(TL_TOPRIGHT);
     //mTrayMgr->toggleAdvancedFrameStats();
     sc = std::to_string(score);
     l = std::to_string(lives);
-    mInfoLabel = mTrayMgr->createLabel(TL_TOP, "TInfo", "My Game Engine", 350);
+    mInfoLabel = mTrayMgr->createLabel(TL_TOP, "TInfo", "Single Paddle Player Game", 350);
     mScoreLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Score", "Score:", 150);
     mScore = mTrayMgr->createLabel(TL_TOPLEFT, "score", sc, 150);
     mLivesLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Lives", "Lives:", 150);
     mLives = mTrayMgr->createLabel(TL_TOPLEFT, "lives", l, 150);
+   // mGameOverLabel = mTrayMgr->createLabel(TL_CENTER, "gameO", "GAME OVER!", 150);
+    //mQuitBtn = mTrayMgr->createButton(TL_CENTER, "qbtn", "Quit Game", 150);
+   
+   // mGameOverLabel->hide();
+    //mQuitBtn->hide();
     // a friendly reminder
     //StringVector names;
     //names.push_back("Help");
@@ -237,77 +249,99 @@ bool Game::keyPressed(const KeyboardEvent& evt)
 
 bool Game::frameRenderingQueued(const FrameEvent& evt)
 {
-    //moving ball
-    if (ballNode->getPosition().y > 130)
+    if (gameover)
     {
-        movDirY = 1;       
-    }
-    if (ballNode->getPosition().y < -50)
-    {
-        //std::cout << "ball fall" << std::endl;
-        lives--;
-        l = std::to_string(lives);
-        mLives->setCaption(l);
-        ballNode->setPosition(Ogre::Vector3(0, 100, 0));
-        std::cout << "lives:" << lives << std::endl;
-    }
-    if (ballNode->getPosition().x > 102)
-    {
-        movDirX = 1;        
-        std::cout << "greater then 102" << std::endl;
-    }
-    if (ballNode->getPosition().x < -102)
-    {
-        std::cout << "less then -102" << std::endl;
-        movDirX = -1;       
-    }
-    //collision
-    AxisAlignedBox spbox = ballNode->_getWorldAABB();
-    AxisAlignedBox cbbox = paddleNode->_getWorldAABB();
-    if (spbox.intersects(cbbox))
-    {
-        if (isCollide == 0)
+       // mGameOverLabel->show();
+        //mQuitBtn->show();
+        if (mQuitBtn->getState() == OgreBites::ButtonState::BS_DOWN)
         {
-            std::cout << "collide";
-            isCollide = 1;
-            movDirY = -1;
-            score++;
-            sc = std::to_string(score);
-            mScore->setCaption(sc);
-            std::cout << "score:" << score << std::endl;
-            // btranslate = Ogre::Vector3(0, 10, 0);
-            const auto attackVector = ballNode->getPosition() - paddleNode->getPosition();
-            const auto normal = Ogre::Vector3(0, -1, 0);
-
-            const auto dot = attackVector.dotProduct(normal); 
-            const auto angle = acos(dot / attackVector.length()) * Ogre::Math::fRad2Deg; 
-
-            if ((attackVector.x > 0 && attackVector.y > 0) || (attackVector.x < 0 && attackVector.y > 0))
-                // bottom right or bottom left
-            {
-                //angle = 140;
-                if (angle <= 135)
-                {
-                    //object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
-                    movDirX = 1;
-                    movDirY = -1;
-                    std::cout << "bottom right" << std::endl;
-                }
-                else
-                {
-                    // object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
-                    movDirY = -1;
-                    movDirX = -1;
-                    std::cout << "bottom left" << std::endl;
-                }
-            }
+            getRoot()->queueEndRendering();
         }
-
+        return true;
     }
     else
-        isCollide = 0;
-   
-  
+    {
+        //moving ball
+        if (ballNode->getPosition().y > 130)
+        {
+            movDirY = 1;
+        }
+        if (ballNode->getPosition().y < -50)
+        {
+            //std::cout << "ball fall" << std::endl;
+            if (lives > 0)
+            {
+                lives--;
+                l = std::to_string(lives);
+                mLives->setCaption(l);
+                ballNode->setPosition(Ogre::Vector3(0, 100, 0));
+                std::cout << "lives:" << lives << std::endl;
+            }
+            else
+            {
+                mGameOverLabel = mTrayMgr->createLabel(TL_CENTER, "gameO", "GAME OVER!", 150);
+                mQuitBtn = mTrayMgr->createButton(TL_CENTER, "qbtn", "Quit Game", 150);
+                gameover = true;
+            }
+            
+        }
+        if (ballNode->getPosition().x > 102)
+        {
+            movDirX = 1;
+            std::cout << "greater then 102" << std::endl;
+        }
+        if (ballNode->getPosition().x < -102)
+        {
+            std::cout << "less then -102" << std::endl;
+            movDirX = -1;
+        }
+        //collision
+        AxisAlignedBox spbox = ballNode->_getWorldAABB();
+        AxisAlignedBox cbbox = paddleNode->_getWorldAABB();
+        if (spbox.intersects(cbbox))
+        {
+            if (isCollide == 0)
+            {
+                std::cout << "collide";
+                isCollide = 1;
+                movDirY = -1;
+                score++;
+                sc = std::to_string(score);
+                mScore->setCaption(sc);
+                std::cout << "score:" << score << std::endl;
+                // btranslate = Ogre::Vector3(0, 10, 0);
+                const auto attackVector = ballNode->getPosition() - paddleNode->getPosition();
+                const auto normal = Ogre::Vector3(0, -1, 0);
+
+                const auto dot = attackVector.dotProduct(normal);
+                const auto angle = acos(dot / attackVector.length()) * Ogre::Math::fRad2Deg;
+
+                if ((attackVector.x > 0 && attackVector.y > 0) || (attackVector.x < 0 && attackVector.y > 0))
+                    // bottom right or bottom left
+                {
+                    //angle = 140;
+                    if (angle <= 135)
+                    {
+                        //object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
+                        movDirX = 1;
+                        movDirY = -1;
+                        std::cout << "bottom right" << std::endl;
+                    }
+                    else
+                    {
+                        // object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
+                        movDirY = -1;
+                        movDirX = -1;
+                        std::cout << "bottom left" << std::endl;
+                    }
+                }
+            }
+
+        }
+        else
+            isCollide = 0;
+
+    }
     return true;
 }
 
@@ -318,6 +352,7 @@ int main(int argc, char** argv)
     {
         Game app;
         app.initApp();
+        
         app.getRoot()->startRendering();
         app.closeApp();
     }

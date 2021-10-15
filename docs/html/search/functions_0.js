@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['setup_0',['setup',['../class_basic_tutorial1.html#ae3ac77a24b3446c760284cd9a5502c89',1,'BasicTutorial1']]]
+  ['btranslate_0',['btranslate',['../_assignment1_8cpp.html#a2f8690b58d93edf00247ae04a3c38ccc',1,'Assignment1.cpp']]]
 ];

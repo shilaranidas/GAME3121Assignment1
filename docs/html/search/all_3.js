@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['setup_0',['setup',['../class_basic_tutorial1.html#ae3ac77a24b3446c760284cd9a5502c89',1,'BasicTutorial1']]]
+  ['exampleframelistener_0',['ExampleFrameListener',['../class_example_frame_listener.html',1,'ExampleFrameListener'],['../class_example_frame_listener.html#a0a713ba782353af12a07827c31974280',1,'ExampleFrameListener::ExampleFrameListener()']]]
 ];
