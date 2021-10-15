@@ -240,8 +240,7 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
     //moving ball
     if (ballNode->getPosition().y > 130)
     {
-        movDirY = 1;
-        // isCollide = 0;
+        movDirY = 1;       
     }
     if (ballNode->getPosition().y < -50)
     {
@@ -254,15 +253,13 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
     }
     if (ballNode->getPosition().x > 102)
     {
-        movDirX = 1;
-        //  isCollide = 0;
+        movDirX = 1;        
         std::cout << "greater then 102" << std::endl;
     }
     if (ballNode->getPosition().x < -102)
     {
         std::cout << "less then -102" << std::endl;
-        movDirX = -1;
-        // isCollide = 0;
+        movDirX = -1;       
     }
     //collision
     AxisAlignedBox spbox = ballNode->_getWorldAABB();
@@ -282,26 +279,8 @@ bool Game::frameRenderingQueued(const FrameEvent& evt)
             const auto attackVector = ballNode->getPosition() - paddleNode->getPosition();
             const auto normal = Ogre::Vector3(0, -1, 0);
 
-            const auto dot = attackVector.dotProduct(normal); // Util::dot(attackVector, normal);
-            const auto angle = acos(dot / attackVector.length()) * Ogre::Math::fRad2Deg; // acos(dot / Util::magnitude(attackVector)) * Util::Rad2Deg;
-            //std::cout << "angle:x:y:z" << angle<<":"<< attackVector.x <<":"<< attackVector.y<<":"<<attackVector.z << std::endl;
-            //if ((attackVector.x > 0 && attackVector.y < 0) || (attackVector.x < 0 && attackVector.y < 0))
-            //    // top right or top left
-            //{
-
-            //    if (angle <= 45)
-            //    {
-            //        //object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
-            //        movDirY = -1;
-            //        movDirX = -1;
-            //    }
-            //    else
-            //    {
-            //        //object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
-            //        movDirX = 1;
-            //        movDirY = -1;
-            //    }
-            //}
+            const auto dot = attackVector.dotProduct(normal); 
+            const auto angle = acos(dot / attackVector.length()) * Ogre::Math::fRad2Deg; 
 
             if ((attackVector.x > 0 && attackVector.y > 0) || (attackVector.x < 0 && attackVector.y > 0))
                 // bottom right or bottom left
