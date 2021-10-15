@@ -21,6 +21,8 @@ Ogre::Vector3 btranslate(0, 0, 0);
 Ogre::int32 isCollide;
 Ogre::int32 movDirY;
 Ogre::int32 movDirX;
+Ogre::int32 score = 0;
+Ogre::int32 lives = 3;
 
 class ExampleFrameListener : public Ogre::FrameListener
 {
@@ -40,88 +42,13 @@ public:
         //moving paddle
         _node->translate(translate * evt.timeSinceLastFrame);       
         translate = Ogre::Vector3(0, 0, 0);
+       
         
-        //moving ball
-        if (_bnode->getPosition().y > 130)
-        {
-            movDirY = 1;
-           // isCollide = 0;
-        }
-        if (_bnode->getPosition().x > 102)
-        {
-            movDirX = 1;
-          //  isCollide = 0;
-            std::cout << "greater then 102" << std::endl;
-        }
-        if (_bnode->getPosition().x < -102)
-        {
-            std::cout << "less then -102" << std::endl;
-            movDirX = -1;
-           // isCollide = 0;
-        }
         //std::cout << "xpos:ypos=" << _bnode->getPosition().x<<":"<< _bnode->getPosition().y << std::endl;
         btranslate = Ogre::Vector3(-10*movDirX, -10 * movDirY, 0);
         _bnode->translate(btranslate * evt.timeSinceLastFrame);
         
-        //collision
-        AxisAlignedBox spbox = _bnode->_getWorldAABB();
-        AxisAlignedBox cbbox = _node->_getWorldAABB();
-        if (spbox.intersects(cbbox))
-        {
-            if (isCollide == 0)
-            {
-                std::cout << "collide";
-                isCollide = 1;
-                movDirY = -1;
-                // btranslate = Ogre::Vector3(0, 10, 0);
-                const auto attackVector = _bnode->getPosition() - _node->getPosition();
-                const auto normal = Ogre::Vector3(0, -1, 0);
-
-                const auto dot = attackVector.dotProduct(normal); // Util::dot(attackVector, normal);
-                const auto angle = acos(dot / attackVector.length()) * Ogre::Math::fRad2Deg; // acos(dot / Util::magnitude(attackVector)) * Util::Rad2Deg;
-                std::cout << "angle:x:y:z" << angle<<":"<< attackVector.x <<":"<< attackVector.y<<":"<<attackVector.z << std::endl;
-                //if ((attackVector.x > 0 && attackVector.y < 0) || (attackVector.x < 0 && attackVector.y < 0))
-                //    // top right or top left
-                //{
-
-                //    if (angle <= 45)
-                //    {
-                //        //object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
-                //        movDirY = -1;
-                //        movDirX = -1;
-                //    }
-                //    else
-                //    {
-                //        //object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
-                //        movDirX = 1;
-                //        movDirY = -1;
-                //    }
-                //}
-
-                if ((attackVector.x > 0 && attackVector.y > 0) || (attackVector.x < 0 && attackVector.y > 0))
-                    // bottom right or bottom left
-                {
-                    //angle = 140;
-                    if (angle <= 135)
-                    {
-                        //object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
-                        movDirX = 1;
-                        movDirY = -1;
-                        std::cout << "bottom right" << std::endl;
-                    }
-                    else
-                    {
-                        // object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
-                        movDirY = -1;
-                        movDirX = -1;
-                        std::cout << "bottom left" << std::endl;
-                    }
-                }
-            }
-
-        }
-        else
-            isCollide = 0;
+       
         return true;
     }
 };
@@ -141,6 +68,7 @@ public:
 
     void setup();
     bool keyPressed(const KeyboardEvent& evt);
+    bool frameRenderingQueued(const FrameEvent& evt);
     void createScene();
     void createCamera();
     void createFrameListener();
@@ -152,8 +80,7 @@ public:
     OgreBites::Label* mLives;
     Ogre::DisplayString sc = "0";
     Ogre::DisplayString l = "3";
-    int score = 0;
-    int lives = 3;
+   
 };
 
 
@@ -222,16 +149,17 @@ void Game::createScene()
     mTrayMgr->showLogo(TL_TOPRIGHT);
     mTrayMgr->showFrameStats(TL_TOPRIGHT);
     //mTrayMgr->toggleAdvancedFrameStats();
-
+    sc = std::to_string(score);
+    l = std::to_string(lives);
     mInfoLabel = mTrayMgr->createLabel(TL_TOP, "TInfo", "My Game Engine", 350);
     mScoreLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Score", "Score:", 150);
     mScore = mTrayMgr->createLabel(TL_TOPLEFT, "score", sc, 150);
     mLivesLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Lives", "Lives:", 150);
     mLives = mTrayMgr->createLabel(TL_TOPLEFT, "lives", l, 150);
     // a friendly reminder
-    StringVector names;
-    names.push_back("Help");
-    mTrayMgr->createParamsPanel(TL_TOPLEFT, "Help", 100, names)->setParamValue(0, "H/F1");
+    //StringVector names;
+    //names.push_back("Help");
+    //mTrayMgr->createParamsPanel(TL_TOPLEFT, "Help", 100, names)->setParamValue(0, "H/F1");
 
 
     Ogre::Entity* ballEntity = scnMgr->createEntity(SceneManager::PrefabType::PT_SPHERE);
@@ -279,6 +207,7 @@ void Game::createCamera()
 void Game::createFrameListener()
 {
     Ogre::FrameListener* FrameListener = new ExampleFrameListener(paddleNode, ballNode);
+   
     mRoot->addFrameListener(FrameListener);
 }
 
@@ -303,6 +232,103 @@ bool Game::keyPressed(const KeyboardEvent& evt)
     default:
         break;
     }
+    return true;
+}
+
+bool Game::frameRenderingQueued(const FrameEvent& evt)
+{
+    //moving ball
+    if (ballNode->getPosition().y > 130)
+    {
+        movDirY = 1;
+        // isCollide = 0;
+    }
+    if (ballNode->getPosition().y < -50)
+    {
+        //std::cout << "ball fall" << std::endl;
+        lives--;
+        l = std::to_string(lives);
+        mLives->setCaption(l);
+        ballNode->setPosition(Ogre::Vector3(0, 100, 0));
+        std::cout << "lives:" << lives << std::endl;
+    }
+    if (ballNode->getPosition().x > 102)
+    {
+        movDirX = 1;
+        //  isCollide = 0;
+        std::cout << "greater then 102" << std::endl;
+    }
+    if (ballNode->getPosition().x < -102)
+    {
+        std::cout << "less then -102" << std::endl;
+        movDirX = -1;
+        // isCollide = 0;
+    }
+    //collision
+    AxisAlignedBox spbox = ballNode->_getWorldAABB();
+    AxisAlignedBox cbbox = paddleNode->_getWorldAABB();
+    if (spbox.intersects(cbbox))
+    {
+        if (isCollide == 0)
+        {
+            std::cout << "collide";
+            isCollide = 1;
+            movDirY = -1;
+            score++;
+            sc = std::to_string(score);
+            mScore->setCaption(sc);
+            std::cout << "score:" << score << std::endl;
+            // btranslate = Ogre::Vector3(0, 10, 0);
+            const auto attackVector = ballNode->getPosition() - paddleNode->getPosition();
+            const auto normal = Ogre::Vector3(0, -1, 0);
+
+            const auto dot = attackVector.dotProduct(normal); // Util::dot(attackVector, normal);
+            const auto angle = acos(dot / attackVector.length()) * Ogre::Math::fRad2Deg; // acos(dot / Util::magnitude(attackVector)) * Util::Rad2Deg;
+            //std::cout << "angle:x:y:z" << angle<<":"<< attackVector.x <<":"<< attackVector.y<<":"<<attackVector.z << std::endl;
+            //if ((attackVector.x > 0 && attackVector.y < 0) || (attackVector.x < 0 && attackVector.y < 0))
+            //    // top right or top left
+            //{
+
+            //    if (angle <= 45)
+            //    {
+            //        //object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
+            //        movDirY = -1;
+            //        movDirX = -1;
+            //    }
+            //    else
+            //    {
+            //        //object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
+            //        movDirX = 1;
+            //        movDirY = -1;
+            //    }
+            //}
+
+            if ((attackVector.x > 0 && attackVector.y > 0) || (attackVector.x < 0 && attackVector.y > 0))
+                // bottom right or bottom left
+            {
+                //angle = 140;
+                if (angle <= 135)
+                {
+                    //object1->getRigidBody()->velocity = glm::vec2(-velocityX, velocityY);
+                    movDirX = 1;
+                    movDirY = -1;
+                    std::cout << "bottom right" << std::endl;
+                }
+                else
+                {
+                    // object1->getRigidBody()->velocity = glm::vec2(velocityX, -velocityY);
+                    movDirY = -1;
+                    movDirX = -1;
+                    std::cout << "bottom left" << std::endl;
+                }
+            }
+        }
+
+    }
+    else
+        isCollide = 0;
+   
+  
     return true;
 }
 
