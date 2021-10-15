@@ -18,6 +18,8 @@ using namespace Ogre;
 using namespace OgreBites;
 Ogre::Vector3 translate(0, 0, 0);
 Ogre::Vector3 btranslate(0, 0, 0);
+Ogre::int32 isCollide;
+Ogre::int32 movDir;
 
 class ExampleFrameListener : public Ogre::FrameListener
 {
@@ -40,12 +42,22 @@ public:
         
         //moving ball
         _bnode->translate(btranslate * evt.timeSinceLastFrame);
-        btranslate = Ogre::Vector3(0, -10, 0);
+        btranslate = Ogre::Vector3(0, -10* movDir, 0);
+        //collision
+        AxisAlignedBox spbox = _bnode->_getWorldAABB();
+        AxisAlignedBox cbbox = _node->_getWorldAABB();
+        if (spbox.intersects(cbbox) && isCollide==0)
+        {
+            std::cout << "collide";
+            isCollide = 1;
+            movDir = -1;
+           // btranslate = Ogre::Vector3(0, 10, 0);
+        }
         return true;
     }
 };
 
-class BasicTutorial1
+class Game
     : public ApplicationContext
     , public InputListener
 {
@@ -55,8 +67,8 @@ private:
     SceneManager* scnMgr;
     Root* root;
 public:
-    BasicTutorial1();
-    virtual ~BasicTutorial1() {}
+    Game();
+    virtual ~Game() {}
 
     void setup();
     bool keyPressed(const KeyboardEvent& evt);
@@ -76,15 +88,17 @@ public:
 };
 
 
-BasicTutorial1::BasicTutorial1()
+Game::Game()
     : ApplicationContext("Assignment 1")
 {
     score = 0;
     lives = 3;
+    isCollide = 0;//no collision
+    movDir = 1;
 }
 
 
-void BasicTutorial1::setup()
+void Game::setup()
 {
     // do not forget to call the base first
     ApplicationContext::setup();
@@ -109,7 +123,7 @@ void BasicTutorial1::setup()
 
 }
 
-void BasicTutorial1::createScene()
+void Game::createScene()
 {
     // -- tutorial section start --
 //! [turnlights]
@@ -168,7 +182,7 @@ void BasicTutorial1::createScene()
 
 }
 
-void BasicTutorial1::createCamera()
+void Game::createCamera()
 {
     //! [camera]
     SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
@@ -191,13 +205,13 @@ void BasicTutorial1::createCamera()
 
 }
 
-void BasicTutorial1::createFrameListener()
+void Game::createFrameListener()
 {
     Ogre::FrameListener* FrameListener = new ExampleFrameListener(paddleNode, ballNode);
     mRoot->addFrameListener(FrameListener);
 }
 
-bool BasicTutorial1::keyPressed(const KeyboardEvent& evt)
+bool Game::keyPressed(const KeyboardEvent& evt)
 {
     switch (evt.keysym.sym)
     {
@@ -226,7 +240,7 @@ int main(int argc, char** argv)
 {
     try
     {
-        BasicTutorial1 app;
+        Game app;
         app.initApp();
         app.getRoot()->startRendering();
         app.closeApp();
